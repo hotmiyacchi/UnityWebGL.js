@@ -6,7 +6,7 @@ const isPlainObject = arg => Object.prototype.toString.call(arg) === '[object Ob
  * The unity loader
  * @param {string} src loaderUrl
  * @param {object} param callback
- * @returns 
+ * @returns
  */
 function unityLoader(src, { resolve, reject }) {
   if (!src) {
@@ -26,7 +26,30 @@ function unityLoader(src, { resolve, reject }) {
       reject && reject(new Error(`'UnityWebgl: ${src}' loading failure.`))
     }
   }
-
+  function addScript(src) {
+    let script = document.createElement('script')
+    script.setAttribute('src', src)
+    console.log(`script: ${src}`)
+  }
+  addScript('/AgoraWebSDK/libs/databuilder.js')
+  addScript('/AgoraWebSDK/libs/clientmanager.js')
+  addScript('/AgoraWebSDK/libs/wglwrapper.js')
+  addScript('/AgoraWebSDK/libs/audioeffects.js')
+  addScript('/AgoraWebSDK/libs/eventmanager.js')
+  addScript('/AgoraWebSDK/libs/engineglobals.js')
+  addScript('/AgoraWebSDK/libs/watermark.js')
+  addScript('/AgoraWebSDK/libs/customvideo.js')
+  addScript('/AgoraWebSDK/libs/agorachannel.js')
+  addScript('/AgoraWebSDK/libs/multichannel.js')
+  addScript('/AgoraWebSDK/libs/audiosystem.js')
+  addScript('/AgoraWebSDK/libs/testing.js')
+  addScript('/AgoraWebSDK/libs/agorautils.js')
+  addScript('/AgoraWebSDK/libs/audiomixing.js')
+  addScript('/AgoraWebSDK/agorartcenginev2.js')
+  addScript('/AgoraWebSDK/vendor/materialize.min.js')
+  addScript('/AgoraRTC_N.js')
+  addScript('/AgoraWebSDK/vendor/jquery.min.js')
+  
   let script = document.querySelector(`script[src="${src}"]`)
   if (script === null) {
     script = document.createElement('script')
@@ -66,13 +89,13 @@ function unityLoader(src, { resolve, reject }) {
 
 /**
  * generate UnityInstance parameters
- * @param {object} unityContext 
- * @param {object} unityProps 
- * @returns 
+ * @param {object} unityContext
+ * @param {object} unityProps
+ * @returns
  */
 function generateUnityInstanceParameters(unity) {
   const unityParameters = { ...unity.config }
-  
+
   unityParameters.print = function (message) {
     unity.emit('debug', message)
   }
@@ -86,8 +109,8 @@ function generateUnityInstanceParameters(unity) {
 
 /**
  * get CanvasElement
- * @param {string | HTMLCanvasElement} canvas 
- * @returns 
+ * @param {string | HTMLCanvasElement} canvas
+ * @returns
  */
 function queryCanvas(canvas) {
   if (canvas instanceof HTMLCanvasElement) {
@@ -110,7 +133,7 @@ export default class UnityWebgl extends EventSystem {
   unityLoader = null
   canvasElement = null
   unityInstance = null
-  
+
   /**
    * Creates a new Unity Context instance
    * @param {object} options The Unity Config
@@ -139,7 +162,7 @@ export default class UnityWebgl extends EventSystem {
       }
     }
   }
-  
+
   /**
    * initialization
    * @param {object|string} canvas HTMLCanvasElement
@@ -156,7 +179,7 @@ export default class UnityWebgl extends EventSystem {
       return false
     }
     this.canvasElement = canvasEl
-    
+
     const ctx = this
     const config = generateUnityInstanceParameters(this)
 
@@ -168,7 +191,7 @@ export default class UnityWebgl extends EventSystem {
             config,
             (val) => ctx._setProgression(val)
           ).then(unity => {
-            ctx.unityInstance = unity 
+            ctx.unityInstance = unity
             ctx.emit('created', unity)
           }).catch(err => {
             ctx.unityInstance = null
@@ -195,13 +218,13 @@ export default class UnityWebgl extends EventSystem {
     }
     this.emit('progress', val)
   }
-  
+
   /**
    * Sends a message to the UnityInstance to invoke a public method.
    * @param {string} objectName Unity scene name.
    * @param {string} methodName public method name.
    * @param {any} params an optional method parameter.
-   * @returns 
+   * @returns
    */
   send(objectName, methodName, params) {
     if (this.unityInstance !== null) {
@@ -214,7 +237,7 @@ export default class UnityWebgl extends EventSystem {
     }
     return this
   }
-  
+
   /**
    * Asynchronously ask for the pointer to be locked on current canvas. To track
    * the success or failure of the request, it is necessary to listen for the
@@ -227,7 +250,7 @@ export default class UnityWebgl extends EventSystem {
       this.canvasElement.requestPointerLock()
     }
   }
-  
+
   /**
    * Takes a screenshot of the canvas and returns a data URL containing image
    * data. The image data is in .png format unless otherwise specified.
@@ -244,17 +267,17 @@ export default class UnityWebgl extends EventSystem {
     }
     return null
   }
-  
+
   /**
    * Enables or disabled the Fullscreen mode of the Unity Instance.
-   * @param {boolean} enabled 
+   * @param {boolean} enabled
    */
   setFullscreen(enabled) {
     if (this.unityInstance !== null) {
       this.unityInstance.SetFullscreen(enabled ? 1 : 0)
     }
   }
-  
+
   /**
    * Quits the Unity Instance and clears it from memory.
    */
@@ -266,7 +289,7 @@ export default class UnityWebgl extends EventSystem {
       })
     }
   }
-  
+
   /**
    * Destroy Unity Instance
    */
